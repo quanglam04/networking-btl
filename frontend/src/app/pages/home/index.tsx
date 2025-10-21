@@ -1,9 +1,9 @@
 import PinInputModal from '@/shared/components/modal/pin-modal'
 import useNotificationHook from '@/shared/hook/useNotificationHook'
-import { Button, notification } from 'antd'
+import { Button } from 'antd'
 
 const Home = () => {
-  const { showError, showSuccess } = useNotificationHook()
+  const { showSuccess } = useNotificationHook()
 
   return (
     <div className='flex justify-center'>

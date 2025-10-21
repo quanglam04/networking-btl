@@ -28,20 +28,20 @@ src/
 │       ├── hooks/         # Common hooks (e.g., useDarkMode, useLoading)
 │       ├── types/         # TypeScript type definitions (Frontend-specific)
 │       └── utils/         # Utility functions (Frontend-specific)
-└── backend/             # Server-side application (Node/Express, etc.)
-  ├── controllers/       # Handle API logic, call services
-  ├── middlewares/       # Express middlewares (authentication, error handling, etc.)
-  ├── models/             # Define schema/data models (ORM or plain)
-  ├── routes/             # Define endpoints and map to corresponding controllers
-  ├── services/           # Contain business logic
-  ├── sockets/           # Handle WebSocket connections and logic (e.g., Socket.IO)
-  ├── shared/             # Shared modules and utilities (Backend-specific)
-  │   ├── constants/     # Application constants (Backend-specific)
-  │   └── utils/         # Utility functions (Backend-specific)
-  ├── config/             # Configuration files for the server, DB, environment, etc.
-  ├── guiline.txt         # Internal notes or project guidelines
-  ├── index.ts           # Entry point to start the server application
-  └── type.d.ts           # Define custom types for TypeScript (Backend-specific)
+└── backend/               # Server-side application (Node/Express, etc.)
+    ├── controllers/       # Handle API logic, call services
+    ├── middlewares/       # Express middlewares (authentication, error handling, etc.)
+    ├── models/            # Define schema/data models (ORM or plain)
+    ├── routes/            # Define endpoints and map to corresponding controllers
+    ├── services/          # Contain business logic
+    ├── sockets/           # Handle WebSocket connections and logic (e.g., Socket.IO)
+    ├── shared/            # Shared modules and utilities (Backend-specific)
+    │   ├── constants/     # Application constants (Backend-specific)
+    │   └── utils/         # Utility functions (Backend-specific)
+    ├── config/            # Configuration files for the server, DB, environment, etc.
+    ├── guiline.txt        # Internal notes or project guidelines
+    ├── index.ts           # Entry point to start the server application
+    └── type.d.ts          # Define custom types for TypeScript (Backend-specific)
 ```
 
 ## Prerequisites

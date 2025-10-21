@@ -1,5 +1,7 @@
 import type { RouteObject } from 'react-router-dom'
-import Home from './pages/home'
+import ChatPage from './pages/chat/chat-page'
+import LoginPage from './pages/auth/login-page'
+import RegisterPage from './pages/auth/register-page'
 import NotFoundPage from './pages/not-found'
 
 const router: RouteObject[] = [
@@ -8,7 +10,15 @@ const router: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <Home />
+        element: <ChatPage />
+      },
+      {
+        path: 'login',
+        element: <LoginPage />
+      },
+      {
+        path: 'register',
+        element: <RegisterPage />
       },
       {
         path: '*',

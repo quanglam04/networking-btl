@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext } from 'react'
 
 type AuthContextType = {
   access_token: string
