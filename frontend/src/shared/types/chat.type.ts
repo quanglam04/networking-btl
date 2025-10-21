@@ -6,3 +6,9 @@ export interface Message {
   isMe: boolean
   senderName: string
 }
+
+export interface User {
+  id: number
+  username: string
+  isOnline: boolean
+}

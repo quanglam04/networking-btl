@@ -1,4 +1,4 @@
-import type { Message } from '@/shared/types/chat.type'
+import type { Message, User } from '@/shared/types/chat.type'
 
 const mockMessages: Message[] = [
   { id: 1, sender: 'lanvtn', content: 'Hi', type: 'text', isMe: false, senderName: 'lanvtn' },
@@ -9,4 +9,14 @@ const mockMessages: Message[] = [
   { id: 6, sender: 'quannm', content: 'globe BB 100d.txt', type: 'file', isMe: true, senderName: 'quannm' }
 ]
 
-export { mockMessages }
+const mockUsers: User[] = [
+  { id: 1, username: 'lanvtn', isOnline: true },
+  { id: 2, username: 'quannm', isOnline: true },
+  { id: 3, username: 'huyenptt', isOnline: false },
+  { id: 4, username: 'trucpt', isOnline: true },
+  { id: 5, username: 'thachpgv', isOnline: false },
+  { id: 6, username: 'nguyenvana', isOnline: true },
+  { id: 7, username: 'lethib', isOnline: false }
+]
+
+export { mockMessages, mockUsers }
