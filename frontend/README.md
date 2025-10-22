@@ -1,6 +1,6 @@
-## Description
+## Introduction
 
-Networking Project Frontend 
+Networking Project Frontend
 
 ## Project Structure
 

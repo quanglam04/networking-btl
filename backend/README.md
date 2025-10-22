@@ -1,4 +1,4 @@
-# Base dự NodeJS
+# Introduction
 
 Networking Project Backend
 
@@ -28,7 +28,7 @@ src/
 
 - NodeJS 18
 - TypeScript 5.8.3
-- tsc-alias 1.8.16 
+- tsc-alias 1.8.16
 - socket.io
 
 ### Tooling & Development
