@@ -1,4 +1,4 @@
-const tokenBlacklist = new Map<string, number>()
+export const tokenBlacklist = new Map<string, number>()
 /**
  * Thêm token vào danh sách đen và lên lịch xóa nó khi hết hạn.
  * @param token Chuỗi JWT cần vô hiệu hóa.

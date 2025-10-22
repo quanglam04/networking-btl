@@ -1,6 +1,7 @@
 import { Response, NextFunction, Request } from 'express'
 import * as jwt from 'jsonwebtoken'
 import HTTPStatus from '~/shared/constants/httpStatus'
+import { isBlacklisted } from '~/services/jwt.service'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key'
 
@@ -14,7 +15,16 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
     })
   }
 
-  jwt.verify(token, JWT_SECRET, (err) => {
+  // Kiểm tra blacklist
+  if(isBlacklisted(token)){
+    return res.status(HTTPStatus.UNAUTHORIZED).json({
+      status: HTTPStatus.UNAUTHORIZED,
+      message: "User đã logout. Access token không còn hợp lệ.",
+      data: null
+    })
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) {
       return res.status(HTTPStatus.UNAUTHORIZED).json({
         status: HTTPStatus.UNAUTHORIZED,
