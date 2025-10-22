@@ -109,7 +109,7 @@ const login = async (req: Request, res: Response) => {
   }
 }
 
-const logout = (req: Request, res: Response) => {
+const logout = async (req: Request, res: Response) => {
   /**
    * Do sử dụng JWT(Stateless) nên server không lưu giữ trạng thái của user, trong khi jwt này không
    * thể vô hiệu hóa sau khi tạo ra được => Để tránh user dùng access_token gọi lại API sau khi logout
@@ -127,64 +127,55 @@ const logout = (req: Request, res: Response) => {
    *    để nó trừ đi thời gian hiện tại xem còn bao nhiêu
    *    addBlackList(1,2)
    */
-  
+
   // Logout cho người dùng
-  const logout = async (req: AuthenticatedRequest, res: Response) => {
-    logger.info("Đăng xuất cho người dùng")
-    try{
-      // Laays token trong header
-      const authHeader = req.headers['authorization']
-      const token = authHeader && authHeader.split(" ")[1]
-       
-      if(!token){
-        return res.status(HTTPStatus.UNAUTHORIZED).json({
-          status: HTTPStatus.UNAUTHORIZED,
-          message: "Không tìm thấy Access Token."
-        })
-      }
+  logger.info("Đăng xuất cho người dùng")
+  try {
+    // Laays token trong header
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(" ")[1]
 
-      // Lấy exprity time của token
-      const payload = jwt.decode(token)
-      if(typeof payload === "string" || !payload || !payload.exp){
-        return res.status(HTTPStatus.BAD_REQUEST).json({
-          status: HTTPStatus.BAD_REQUEST,
-          message: "Access token không hợp lệ."
-        })
-      }
-
-      // Thêm token của user vào blacklist
-      addToBlacklist(token, payload.exp)
-
-      // do đăng xuất nên cho qua "offline"
-      if(req.user){
-        await User.findByIdAndUpdate(req.user.id, {
-          status: 'offline',
-          lastSeen: new Date()
-        })
-        logger.info(`User Id ${req.user.id} đã cập nhật status: offline`)
-      }
-      else if(payload.id){ // lấy từ payload nhưng kém an toàn hơn
-        await User.findByIdAndUpdate(payload.id, {
-          status: 'offline',
-          lastSeen: new Date()
-        })
-        logger.info(`User Id ${payload.id} đã cập nhật status: offline`)
-      }
-
-      logger.info(`Token đã thêm vào Blacklist. Đăng xuất thành công.`)
-
-      return res.status(HTTPStatus.OK).json({
-        status: HTTPStatus.OK, 
-        message: "Đăng xuất thành công",
-        data: null
-      })
-    } catch (e: any){
-      logger.error("Lỗi khi đăng xuất: ", e)
-      return res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json({
-        status: HTTPStatus.INTERNAL_SERVER_ERROR,
-        message: "Lỗi Server trong quá trình đăng xuất."
+    if (!token) {
+      return res.status(HTTPStatus.UNAUTHORIZED).json({
+        status: HTTPStatus.UNAUTHORIZED,
+        message: "Không tìm thấy Access Token."
       })
     }
+
+    // Lấy exprity time của token
+    const payload = jwt.decode(token)
+    if (typeof payload === "string" || !payload || !payload.exp) {
+      return res.status(HTTPStatus.BAD_REQUEST).json({
+        status: HTTPStatus.BAD_REQUEST,
+        message: "Access token không hợp lệ."
+      })
+    }
+
+    // Thêm token của user vào blacklist
+    addToBlacklist(token, payload.exp)
+
+    // do đăng xuất nên cho qua "offline"
+    if (payload.id) { // lấy từ payload nhưng kém an toàn hơn
+      await User.findByIdAndUpdate(payload.id, {
+        status: 'offline',
+        lastSeen: new Date()
+      })
+      logger.info(`User Id ${payload.id} đã cập nhật status: offline`)
+    }
+
+    logger.info(`Token đã thêm vào Blacklist. Đăng xuất thành công.`)
+
+    return res.status(HTTPStatus.OK).json({
+      status: HTTPStatus.OK,
+      message: "Đăng xuất thành công",
+      data: null
+    })
+  } catch (e: any) {
+    logger.error("Lỗi khi đăng xuất: ", e)
+    return res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json({
+      status: HTTPStatus.INTERNAL_SERVER_ERROR,
+      message: "Lỗi Server trong quá trình đăng xuất."
+    })
   }
 }
 

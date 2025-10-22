@@ -1,12 +1,11 @@
 import { Response, NextFunction, Request } from 'express'
 import * as jwt from 'jsonwebtoken'
 import HTTPStatus from '~/shared/constants/httpStatus'
-import { AuthenticatedRequest } from '~/shared/types/util.type'
 import { isBlacklisted } from '~/services/jwt.service'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key'
 
-export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]
   if (token == null) {
