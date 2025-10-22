@@ -106,6 +106,24 @@ const login = async (req: Request, res: Response) => {
   }
 }
 
-const logout = (req: Request, res: Response) => {}
+const logout = (req: Request, res: Response) => {
+  /**
+   * Do sử dụng JWT(Stateless) nên server không lưu giữ trạng thái của user, trong khi jwt này không
+   * thể vô hiệu hóa sau khi tạo ra được => Để tránh user dùng access_token gọi lại API sau khi logout
+   * thì phía server thường có 1 black list lưu trữ token của user sau khi logout. Nếu nó gọi API sử
+   * dụng token này => chặn luôn. Flow để làm tính năng này
+   * 1. Trong hàm middleware (user.middleware)
+   *  Trước hàm next(), kiểm tra xem cái token này có nằm trong blacklist không (tokenBlacklist)
+   *    Nếu có => trả về (status: 401, message: User đã logout, data: null)
+   *    Nếu không đi tiếp
+   * 2. Trong hàm logout này
+   *  Lấy token từ đầu request, cách lấy tương tự bên middleware
+   *  Gọi cái hàm thêm vào blacklist trong file service truyền vào 2 tham số
+   *    1 là token này
+   *    2 là thời gian token được sinh ra (cái này lấy bằng cách giải mã token rồi lấy ra trường iat) + thời gian hết hạn ( đang để là 1 ngày ). Mục đích là truyền sang bên kia
+   *    để nó trừ đi thời gian hiện tại xem còn bao nhiêu
+   *    addBlackList(1,2)
+   */
+}
 
 export { test, register, login, logout }
