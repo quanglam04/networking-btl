@@ -1,14 +1,11 @@
-import { Response, NextFunction, Request } from 'express'
+import { Response, NextFunction } from 'express'
 import * as jwt from 'jsonwebtoken'
 import HTTPStatus from '~/shared/constants/httpStatus'
 import { isBlacklisted } from '~/services/jwt.service'
+import { AuthRequest } from '~/shared/types/util.type'
+import logger from '~/shared/utils/log'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key'
-
-// tạo trường interface để gắn payload của user vào req
-interface AuthRequest extends Request {
-  user?: string | jwt.JwtPayload
-}
 
 export const authenticateToken = (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers['authorization']
@@ -17,15 +14,6 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
     return res.status(HTTPStatus.UNAUTHORIZED).json({
       status: HTTPStatus.UNAUTHORIZED,
       message: 'Yêu cầu Access Token. Truy cập bị từ chối.'
-    })
-  }
-
-  // Kiểm tra blacklist
-  if(isBlacklisted(token)){
-    return res.status(HTTPStatus.UNAUTHORIZED).json({
-      status: HTTPStatus.UNAUTHORIZED,
-      message: "User đã logout. Access token không còn hợp lệ.",
-      data: null
     })
   }
 
@@ -38,9 +26,19 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
       })
     }
 
-    // Gắn thông tin user vào request -> hiện tại dùng cho getListUser
-    req.user = user
+    // Kiểm tra blacklist
+    if (isBlacklisted(token)) {
+      logger.error(
+        `User [${(user as jwt.JwtPayload).username}] đang truy cập vào hệ thống bằng token đã logout trước đó`
+      )
+      return res.status(HTTPStatus.UNAUTHORIZED).json({
+        status: HTTPStatus.UNAUTHORIZED,
+        message: 'User đã logout. Access token không còn hợp lệ.',
+        data: null
+      })
+    }
 
+    req.user = user
     next()
   })
 }
