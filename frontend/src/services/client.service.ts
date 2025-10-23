@@ -4,7 +4,11 @@ import type { LoginRequest, LoginResponse } from '@/shared/types/auth.type'
 
 class _ClientService {
   async login(payload: LoginRequest) {
-    const response = await http.post<ApiResponse<LoginResponse>>('/auth/login', payload)
+    const response = await http.post<ApiResponse<LoginResponse>>('api/user/login', payload)
+    return response
+  }
+  async test() {
+    const response = await http.get<ApiResponse<null>>('api/user/test')
     return response
   }
 }
