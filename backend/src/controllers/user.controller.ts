@@ -4,6 +4,7 @@ import HTTPStatus from '~/shared/constants/httpStatus'
 import logger from '~/shared/utils/log'
 import * as jwt from 'jsonwebtoken'
 import { addToBlacklist } from '~/services/jwt.service'
+import { Http } from 'winston/lib/winston/transports'
 
 const test = (req: Request, res: Response) => {
   res.json({ message: 'OK' })
@@ -179,6 +180,58 @@ const logout = async (req: Request, res: Response) => {
   }
 }
 
-const getListUser = async (req: Request, res: Response) => {}
+const getListUser = async (req: Request, res: Response) => {
+  logger.info("API lấy danh sách người dùng")
+  try {
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(" ")[1]
+
+    // Kiểm tra token các thứ như ở logout
+    // Check điều kiện không có token
+    if(!token){
+      return res.status(HTTPStatus.UNAUTHORIZED).json({
+        status: HTTPStatus.UNAUTHORIZED,
+        message: "Không tìm thấy Access token."
+      })
+    }
+
+    // kiểm tra tính hợp lệ của token
+    const payload = jwt.decode(token)
+    if(typeof payload === 'string' || !payload || !payload.id){
+      return res.status(HTTPStatus.BAD_REQUEST).json({
+        status: HTTPStatus.BAD_REQUEST,
+        message: "Access token không hợp lệ."
+      })
+    }
+
+    // ===== Lấy danh sách người dùng =====
+    const currentUserId = payload.id 
+    const listUser = await User.find({_id: {$ne: currentUserId}})
+                                .select('username status lastSeen, createdAt')
+
+    if(listUser.length){
+      return res.status(HTTPStatus.OK).json({
+        status: HTTPStatus.OK,
+        message: "Lấy danh sách người dùng thành công",
+        data: listUser
+      })
+    }
+    else{
+      return res.status(HTTPStatus.NO_CONTENT).json({
+        status: HTTPStatus.NO_CONTENT,
+        message: "Danh sách người dùng hiện đang trống",
+        data: listUser
+      })
+    }
+
+  } catch (e: any) {
+    logger.error("Lỗi không thể lấy danh sách người dùng: ", e)
+    return res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json({
+      status: HTTPStatus.INTERNAL_SERVER_ERROR,
+      message: "Lỗi server",
+      data: null
+    })   
+  }
+}
 
 export { test, register, login, logout, getListUser }
