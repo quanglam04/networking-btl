@@ -18,4 +18,15 @@ interface LoginResponse {
   }
 }
 
-export type { LoginRequest, LoginResponse }
+interface RegisterRequest {
+  username: string
+  password: string
+  confirm_password: string
+}
+
+interface RequestResponse {
+  id: string
+  username: string
+}
+
+export type { LoginRequest, LoginResponse, RegisterRequest, RequestResponse }
