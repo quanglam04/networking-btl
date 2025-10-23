@@ -4,7 +4,6 @@ import HTTPStatus from '~/shared/constants/httpStatus'
 import logger from '~/shared/utils/log'
 import * as jwt from 'jsonwebtoken'
 import { addToBlacklist } from '~/services/jwt.service'
-import { AuthenticatedRequest } from '~/shared/types/util.type'
 
 const test = (req: Request, res: Response) => {
   res.json({ message: 'OK' })
@@ -129,25 +128,25 @@ const logout = async (req: Request, res: Response) => {
    */
 
   // Logout cho người dùng
-  logger.info("Đăng xuất cho người dùng")
+  logger.info('Đăng xuất cho người dùng')
   try {
     // Laays token trong header
     const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(" ")[1]
+    const token = authHeader && authHeader.split(' ')[1]
 
     if (!token) {
       return res.status(HTTPStatus.UNAUTHORIZED).json({
         status: HTTPStatus.UNAUTHORIZED,
-        message: "Không tìm thấy Access Token."
+        message: 'Không tìm thấy Access Token.'
       })
     }
 
     // Lấy exprity time của token
     const payload = jwt.decode(token)
-    if (typeof payload === "string" || !payload || !payload.exp) {
+    if (typeof payload === 'string' || !payload || !payload.exp) {
       return res.status(HTTPStatus.BAD_REQUEST).json({
         status: HTTPStatus.BAD_REQUEST,
-        message: "Access token không hợp lệ."
+        message: 'Access token không hợp lệ.'
       })
     }
 
@@ -155,7 +154,8 @@ const logout = async (req: Request, res: Response) => {
     addToBlacklist(token, payload.exp)
 
     // do đăng xuất nên cho qua "offline"
-    if (payload.id) { // lấy từ payload nhưng kém an toàn hơn
+    if (payload.id) {
+      // lấy từ payload nhưng kém an toàn hơn
       await User.findByIdAndUpdate(payload.id, {
         status: 'offline',
         lastSeen: new Date()
@@ -167,16 +167,18 @@ const logout = async (req: Request, res: Response) => {
 
     return res.status(HTTPStatus.OK).json({
       status: HTTPStatus.OK,
-      message: "Đăng xuất thành công",
+      message: 'Đăng xuất thành công',
       data: null
     })
   } catch (e: any) {
-    logger.error("Lỗi khi đăng xuất: ", e)
+    logger.error('Lỗi khi đăng xuất: ', e)
     return res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json({
       status: HTTPStatus.INTERNAL_SERVER_ERROR,
-      message: "Lỗi Server trong quá trình đăng xuất."
+      message: 'Lỗi Server trong quá trình đăng xuất.'
     })
   }
 }
 
-export { test, register, login, logout }
+const getListUser = async (req: Request, res: Response) => {}
+
+export { test, register, login, logout, getListUser }
