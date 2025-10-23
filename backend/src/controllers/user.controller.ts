@@ -4,7 +4,7 @@ import HTTPStatus from '~/shared/constants/httpStatus'
 import logger from '~/shared/utils/log'
 import * as jwt from 'jsonwebtoken'
 import { addToBlacklist } from '~/services/jwt.service'
-import { AuthenticatedRequest } from '~/shared/types/util.type'
+import { AuthRequest } from '~/shared/types/util.type'
 
 const test = (req: Request, res: Response) => {
   res.json({ message: 'OK' })
@@ -129,54 +129,80 @@ const logout = async (req: Request, res: Response) => {
    */
 
   // Logout cho người dùng
-  logger.info("Đăng xuất cho người dùng")
+  logger.info('Đăng xuất cho người dùng')
   try {
     // Laays token trong header
     const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(" ")[1]
+    const token = authHeader && authHeader.split(' ')[1]
 
     if (!token) {
       return res.status(HTTPStatus.UNAUTHORIZED).json({
         status: HTTPStatus.UNAUTHORIZED,
-        message: "Không tìm thấy Access Token."
+        message: 'Không tìm thấy Access Token.'
       })
     }
 
     // Lấy exprity time của token
     const payload = jwt.decode(token)
-    if (typeof payload === "string" || !payload || !payload.exp) {
+    if (typeof payload === 'string' || !payload || !payload.exp) {
       return res.status(HTTPStatus.BAD_REQUEST).json({
         status: HTTPStatus.BAD_REQUEST,
-        message: "Access token không hợp lệ."
+        message: 'Access token không hợp lệ.'
       })
     }
 
-    // Thêm token của user vào blacklist
     addToBlacklist(token, payload.exp)
 
-    // do đăng xuất nên cho qua "offline"
-    if (payload.id) { // lấy từ payload nhưng kém an toàn hơn
+    if (payload.id) {
       await User.findByIdAndUpdate(payload.id, {
         status: 'offline',
         lastSeen: new Date()
       })
-      logger.info(`User Id ${payload.id} đã cập nhật status: offline`)
+      logger.info(`User [${payload.username}] đã cập nhật status: offline`)
     }
-
-    logger.info(`Token đã thêm vào Blacklist. Đăng xuất thành công.`)
 
     return res.status(HTTPStatus.OK).json({
       status: HTTPStatus.OK,
-      message: "Đăng xuất thành công",
+      message: 'Đăng xuất thành công',
       data: null
     })
   } catch (e: any) {
-    logger.error("Lỗi khi đăng xuất: ", e)
+    logger.error('Lỗi khi đăng xuất: ', e)
     return res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json({
       status: HTTPStatus.INTERNAL_SERVER_ERROR,
-      message: "Lỗi Server trong quá trình đăng xuất."
+      message: 'Lỗi Server trong quá trình đăng xuất.'
     })
   }
 }
 
-export { test, register, login, logout }
+const getListUser = async (req: AuthRequest, res: Response) => {
+  logger.info('Lấy danh sách người dùng')
+  try {
+    const payload = req.user
+    const currentUserId = (payload as jwt.JwtPayload).id
+    const listUser = await User.find({ _id: { $ne: currentUserId } }).select('username status lastSeen, createdAt')
+    if (listUser.length) {
+      return res.status(HTTPStatus.OK).json({
+        status: HTTPStatus.OK,
+        message: 'Lấy danh sách người dùng thành công',
+        data: listUser
+      })
+    } else {
+      return res.status(HTTPStatus.NO_CONTENT).json({
+        status: HTTPStatus.NO_CONTENT,
+        message: 'Danh sách người dùng hiện đang trống',
+        data: listUser
+      })
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (e: any) {
+    logger.error('Lỗi không thể lấy danh sách người dùng: ', e)
+    return res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json({
+      status: HTTPStatus.INTERNAL_SERVER_ERROR,
+      message: 'Lỗi server',
+      data: null
+    })
+  }
+}
+
+export { test, register, login, logout, getListUser }
