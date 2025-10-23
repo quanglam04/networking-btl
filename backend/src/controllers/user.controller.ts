@@ -183,26 +183,9 @@ const logout = async (req: Request, res: Response) => {
 const getListUser = async (req: Request, res: Response) => {
   logger.info("API lấy danh sách người dùng")
   try {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(" ")[1]
 
-    // Kiểm tra token các thứ như ở logout
-    // Check điều kiện không có token
-    if(!token){
-      return res.status(HTTPStatus.UNAUTHORIZED).json({
-        status: HTTPStatus.UNAUTHORIZED,
-        message: "Không tìm thấy Access token."
-      })
-    }
-
-    // kiểm tra tính hợp lệ của token
-    const payload = jwt.decode(token)
-    if(typeof payload === 'string' || !payload || !payload.id){
-      return res.status(HTTPStatus.BAD_REQUEST).json({
-        status: HTTPStatus.BAD_REQUEST,
-        message: "Access token không hợp lệ."
-      })
-    }
+    // Lấy thông tin user được gắn trong request
+    const payload = (req as any).user
 
     // ===== Lấy danh sách người dùng =====
     const currentUserId = payload.id 
