@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import User from '~/models/User'
 
 export const connectDB = async () => {
   try {
@@ -11,5 +12,21 @@ export const connectDB = async () => {
     console.log(process.env.DB_URL as string)
     console.error(error)
     process.exit(1)
+  }
+}
+
+export const clearDataUsers = async () => {
+  try {
+    const result = await User.deleteMany({})
+
+    console.log('============================================')
+    console.log('✅ Xóa dữ liệu thành công')
+    console.log(`Số lượng tài khoản đã xóa: ${result.deletedCount}`)
+    console.log('============================================')
+
+    return result.deletedCount
+  } catch (error) {
+    console.error('❌ Lỗi khi xóa dữ liệu users:', error)
+    throw error
   }
 }

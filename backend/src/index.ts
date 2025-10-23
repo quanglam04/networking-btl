@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import express from 'express'
-import { connectDB } from './config/db.config'
+import { clearDataUsers, connectDB } from './config/db.config'
 import './models/User'
 import './models/Message'
 import './models/Conversation'
@@ -20,6 +20,7 @@ app.use('/api/user', userRouter)
 
 const startServer = async () => {
   await connectDB()
+  // await clearDataUsers()
   app.listen(PORT, () => console.log(`Server đang chạy trên cổng ${PORT}`))
 }
 
