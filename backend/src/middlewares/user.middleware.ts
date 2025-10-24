@@ -7,6 +7,13 @@ import logger from '~/shared/utils/log'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key'
 
+/**
+ * Middleware xử lý token trước khi cho request đến server
+ * @param req
+ * @param res
+ * @param next
+ * @returns
+ */
 export const authenticateToken = (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]

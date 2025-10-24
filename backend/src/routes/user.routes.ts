@@ -1,6 +1,9 @@
 import express from 'express'
 import { getListUser, login, logout, register, test } from '~/controllers/user.controller'
 import { authenticateToken } from '~/middlewares/user.middleware'
+/**
+ * Định nghĩa các route liên quan đến user
+ */
 
 export const userRouter = express.Router()
 
