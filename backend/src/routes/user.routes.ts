@@ -7,9 +7,11 @@ import { authenticateToken } from '~/middlewares/user.middleware'
 
 export const userRouter = express.Router()
 
-userRouter.get('/test', authenticateToken, test)
-userRouter.get('/list', authenticateToken, getListUser)
-
 userRouter.post('/login', login)
 userRouter.post('/register', register)
 userRouter.post('/logout', logout)
+
+userRouter.use(authenticateToken) // áp dụng middleware xác thực token cho các route bên dưới
+
+userRouter.get('/test', test)
+userRouter.get('/list', getListUser)
