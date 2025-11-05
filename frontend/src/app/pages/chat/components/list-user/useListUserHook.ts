@@ -94,6 +94,7 @@ const useListUserHook = () => {
       console.log('Response::', response)
       if (response.status === 200) {
         const conversationId = response.data.data._id
+        console.log('conversationId::::', conversationId)
 
         // Join conversation room
         socketService.joinConversations([conversationId])

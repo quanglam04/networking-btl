@@ -12,7 +12,7 @@ export const conversationRouter = express.Router()
 
 conversationRouter.use(authenticateToken)
 
-conversationRouter.get('/:otherUserId/messages', getConversationMessage)
+conversationRouter.get('/:otherUserId/messages', getConversationMessage) // Lấy messages của conversation với otherUserId
 conversationRouter.get('/get-all', getAllConversationMessages) // Lấy tất cả conversations
 conversationRouter.post('/find-or-create', findOrCreateConversation) // Tìm hoặc tạo conversation với username
 conversationRouter.get('/users', getAllUserExceptCurrent) // Lấy tất cả users (trừ current user)
