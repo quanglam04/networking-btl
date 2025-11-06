@@ -1,6 +1,9 @@
 import mongoose from 'mongoose'
 import Conversation from '../models/Conversation'
 
+/**
+ * Cái này ko cần xem. Mục đích là để fix lỗi index hôm trước
+ */
 export async function fixIndex() {
   try {
     const MONGODB_URI = process.env.DB_URL || 'mongodb://localhost:27017/chat-app'

@@ -2,6 +2,11 @@ import jwt, { JwtPayload } from 'jsonwebtoken'
 import { Socket } from 'socket.io'
 import User from '~/models/User'
 
+/**
+ * Middleware xác thực người dùng cho kết nối socket.io
+ * @param socket
+ * @param next
+ */
 export const socketAuth = async (socket: Socket, next: (err?: Error) => void) => {
   try {
     const token = socket.handshake.auth.token

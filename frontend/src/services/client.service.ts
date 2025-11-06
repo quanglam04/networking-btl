@@ -31,6 +31,11 @@ class _ClientService {
     return response
   }
 
+  async logout() {
+    const response = await http.post<ApiResponse<null>>('api/user/logout')
+    return response
+  }
+
   async getCurrentUserName() {
     return storageService.getUsernameFromLS()
   }

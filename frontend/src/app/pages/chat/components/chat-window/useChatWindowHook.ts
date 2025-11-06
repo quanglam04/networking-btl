@@ -5,13 +5,12 @@ import type { Message } from '@/shared/types/chat.type'
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useLocation } from 'react-router-dom'
 
-interface MessageWithIsMe extends Message {
+export interface MessageWithIsMe extends Message {
   isMe: boolean
 }
 
 const useChatWindowHook = () => {
-  const { conversationId } = useParams<{ conversationId: string }>() // cái này hiện tại là id của thằng nhận nhưng lại đang nhầm là id conversation.
-  // giờ sửa lại. Từ
+  const { conversationId } = useParams<{ conversationId: string }>()
   const location = useLocation()
   const { username: receiverUsername, userId: receiverId, status } = location.state || {}
 
@@ -21,7 +20,7 @@ const useChatWindowHook = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const { showError } = useNotificationHook()
 
-  const currentUsername = localStorage.getItem('username')
+  const currentUsername = localStorage.getItem('userName')
 
   // Load messages
   const loadMessages = async () => {
@@ -29,14 +28,14 @@ const useChatWindowHook = () => {
 
     try {
       setLoading(true)
-      console.log(`api/messages/${conversationId}`)
       const response = await clientService.getAllMessageOfConversation(conversationId)
-      console.log('response chat window:::', response)
       if (response.status === 200) {
-        const messagesData = response.data.data.map((msg: Message) => ({
-          ...msg,
-          isMe: msg.senderName === currentUsername
-        }))
+        const messagesData = response.data.data.map((msg: Message) => {
+          return {
+            ...msg,
+            isMe: msg.senderId.username === currentUsername
+          }
+        })
         setMessages(messagesData)
       }
     } catch (error) {
@@ -104,7 +103,9 @@ const useChatWindowHook = () => {
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
+    console.log(e)
     if (e.key === 'Enter' && !e.shiftKey) {
+      console.log('ok')
       e.preventDefault()
       handleSend()
     }

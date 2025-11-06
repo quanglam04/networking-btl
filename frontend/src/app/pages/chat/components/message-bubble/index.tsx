@@ -1,7 +1,7 @@
 import { Avatar } from 'antd'
 import { UserOutlined } from '@ant-design/icons'
 
-interface MessageBubbleProps {
+export interface MessageBubbleProps {
   message: {
     _id: string
     content?: string
