@@ -5,7 +5,7 @@ const useNotificationHook = () => {
     notification.success({
       message: message,
       placement: 'top',
-      duration: 2
+      duration: 1
     })
   }
 
@@ -13,7 +13,7 @@ const useNotificationHook = () => {
     notification.error({
       message: message,
       placement: 'top',
-      duration: 2
+      duration: 1
     })
   }
   return { showSuccess, showError }
