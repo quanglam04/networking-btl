@@ -19,3 +19,11 @@ export interface User {
   username: string
   isOnline: boolean
 }
+
+export interface FileResponse {
+  filename: string
+  originalName: string
+  size: number
+  mimetype: string
+  url: string
+}

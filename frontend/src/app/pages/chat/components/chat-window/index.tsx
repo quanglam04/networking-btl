@@ -1,13 +1,23 @@
 import { Input, Button } from 'antd'
-import { SendOutlined } from '@ant-design/icons'
+import { PaperClipOutlined, SendOutlined } from '@ant-design/icons'
 import MessageBubble, { type MessageBubbleProps } from '../message-bubble'
 import useChatWindowHook from './useChatWindowHook'
 
 const { TextArea } = Input
 
 const ChatWindow = () => {
-  const { messages, inputValue, loading, messagesEndRef, handleInputChange, handleSend, handleKeyPress } =
-    useChatWindowHook()
+  const {
+    handleFileSelect,
+    messages,
+    inputValue,
+    loading,
+    messagesEndRef,
+    handleInputChange,
+    handleSend,
+    handleKeyPress,
+    setUploadingFile,
+    uploadingFile
+  } = useChatWindowHook()
 
   if (loading) {
     return (
@@ -47,6 +57,16 @@ const ChatWindow = () => {
       {/* Input area */}
       <div className='border-t bg-white p-4'>
         <div className='flex space-x-2'>
+          <Button
+            type='text'
+            icon={<PaperClipOutlined />}
+            onClick={() => document.getElementById('file-input')?.click()}
+            size='large'
+            title='Đính kèm file'
+            loading={uploadingFile}
+            disabled={uploadingFile}
+          />
+          <input id='file-input' type='file' style={{ display: 'none' }} onChange={handleFileSelect} multiple />
           <TextArea
             value={inputValue}
             onChange={handleInputChange}

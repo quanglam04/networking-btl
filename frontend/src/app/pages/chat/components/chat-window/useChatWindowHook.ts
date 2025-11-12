@@ -2,6 +2,7 @@ import clientService from '@/services/client.service'
 import socketService from '@/services/socket.service'
 import useNotificationHook from '@/shared/hook/useNotificationHook'
 import type { Message } from '@/shared/types/chat.type'
+import { HTTP_STATUS } from '@/shared/types/http.type'
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useLocation } from 'react-router-dom'
 
@@ -16,9 +17,10 @@ const useChatWindowHook = () => {
 
   const [messages, setMessages] = useState<MessageWithIsMe[]>([])
   const [inputValue, setInputValue] = useState('')
+  const [uploadingFile, setUploadingFile] = useState(false)
   const [loading, setLoading] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const { showError } = useNotificationHook()
+  const { showError, showSuccess } = useNotificationHook()
 
   const currentUsername = localStorage.getItem('userName')
 
@@ -90,6 +92,61 @@ const useChatWindowHook = () => {
     setInputValue(e.target.value)
   }
 
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    const file = files[0]
+
+    // Kiểm tra kích thước file
+    if (file.size > 10 * 1024 * 1024) {
+      showError('File không được vượt quá 10MB')
+      return
+    }
+
+    try {
+      setUploadingFile(true)
+
+      // 1. Upload file qua HTTP
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await clientService.uploadFile(formData)
+      console.log(response.data)
+      if (response.status !== HTTP_STATUS.OK) {
+        console.log(`response ${response.data}`)
+        throw new Error('Upload file thất bại')
+      }
+
+      console.log(`response 1 ${response.data}`)
+
+      const result = response.data.data
+
+      // 2. Gửi thông tin file qua WebSocket
+      await socketService.sendMessage(
+        receiverUsername,
+        file.name, // Tên file làm content
+        'file', // type = 'file'
+        {
+          fileName: result.filename,
+          originalName: result.originalName,
+          size: result.size,
+          mimeType: result.mimetype,
+          url: result.url
+        }
+      )
+
+      // Reset input file
+      e.target.value = ''
+      showSuccess('Gửi file thành công')
+    } catch (error) {
+      showError('Không thể gửi file')
+      console.error('Error uploading file:', error)
+    } finally {
+      setUploadingFile(false)
+    }
+  }
+
   const handleSend = async () => {
     if (!inputValue.trim() || !receiverUsername) return
 
@@ -121,7 +178,10 @@ const useChatWindowHook = () => {
     messagesEndRef,
     handleInputChange,
     handleSend,
-    handleKeyPress
+    handleKeyPress,
+    handleFileSelect,
+    uploadingFile,
+    setUploadingFile
   }
 }
 
