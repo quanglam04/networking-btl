@@ -6,62 +6,52 @@ type MessageBubbleProp = {
   message: Message
 }
 
-const handleOnClick = (url: string) => {
-  const urlPreview = `http://localhost:8080${url}`
-  console.log(urlPreview)
-  window.open(urlPreview, '_blank')
+const buildAbsoluteUrl = (url?: string) => {
+  if (!url) return ''
+  // Backend phục vụ static ở http://localhost:8080, media.url dạng "/uploads/xxx.mp4"
+  if (url.startsWith('http')) return url
+  return `http://localhost:8080${url}`
 }
 
 const MessageBubble = ({ message }: MessageBubbleProp) => {
+  const isVideo = Boolean(message.media?.mimeType?.startsWith('video/'))
+  const fileUrl = buildAbsoluteUrl(message.media?.url)
+
   return (
     <div className={`flex items-end space-x-2 ${message.isMe ? 'flex-row-reverse space-x-reverse' : ''}`}>
-      {/* Avatar chỉ hiện cho tin nhắn người khác */}
       {!message.isMe && <Avatar icon={<UserOutlined />} size='small' style={{ backgroundColor: '#1890ff' }} />}
 
       <div className='flex max-w-[70%] flex-col'>
-        {/* Username chỉ hiện cho tin nhắn người khác */}
         {!message.isMe && <span className='mb-1 text-xs text-gray-500'>{message.senderId.username}</span>}
 
-        <div
-          className={`rounded-lg px-4 py-2 ${
-            message.isMe ? 'bg-blue-500 text-white' : 'border border-gray-200 bg-white text-gray-800'
-          }`}
-        >
-          {message.content && (
-            <p
-              className={`break-words whitespace-pre-wrap ${
-                message.media?.url
-                  ? 'flex cursor-pointer items-center space-x-2 rounded-lg p-2 transition hover:bg-gray-100'
-                  : ''
-              }`}
-              onClick={() => {
-                if (message.media?.url) handleOnClick(message.media.url)
-              }}
-            >
-              {message.media?.url ? (
-                <>
-                  {/* Icon file */}
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    className='h-5 w-5 flex-shrink-0 text-blue-500'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    stroke='currentColor'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth={2}
-                      d='M7 21h10a2 2 0 002-2V9l-6-6H7a2 2 0 00-2 2v14a2 2 0 002 2z'
-                    />
-                  </svg>
-                  {/* Tên file */}
-                  <span className='text-blue-700 underline'>{message.media.url.split('/').pop()}</span>
-                </>
-              ) : (
-                message.content
-              )}
-            </p>
+        <div className={`rounded-lg px-4 py-2 ${message.isMe ? 'bg-blue-500 text-white' : 'border border-gray-200 bg-white text-gray-800'}`}>
+          {/* Nội dung */}
+          {isVideo ? (
+            <div className="space-y-2">
+              <video
+                src={fileUrl}
+                controls
+                playsInline
+                crossOrigin="anonymous"   // để CORS rõ ràng cho video
+                preload="metadata"
+                className="max-h-64 w-full rounded-md"
+              />
+              <div className="flex items-center justify-between text-xs">
+                <span className="truncate">
+                  {message.media?.originalName || message.content}
+                </span>
+                <a href={fileUrl} download className="underline">
+                  Tải xuống
+                </a>
+              </div>
+            </div>
+          ) : message.media?.url ? (
+            // fallback: file khác loại -> vẫn để link như cũ
+            <a href={fileUrl} target="_blank" rel="noreferrer" className="underline">
+              {message.media.url.split('/').pop()}
+            </a>
+          ) : (
+            <p className="break-words whitespace-pre-wrap">{message.content}</p>
           )}
 
           <p className={`mt-1 text-xs ${message.isMe ? 'text-blue-100' : 'text-gray-400'}`}>
