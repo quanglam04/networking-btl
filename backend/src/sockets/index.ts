@@ -2,6 +2,7 @@ import { Server } from 'socket.io'
 import User from '~/models/User'
 import { socketAuth } from './middleware/auth.middleware'
 import { messageHandler } from './handlers/message.handler'
+import { cleanupFileUploads, fileHandler } from './handlers/file.handler'
 
 /**
  * Entry point để thiết lập Socket.io server
@@ -29,9 +30,15 @@ export const setupSocket = (io: Server) => {
     // Xử lý các sự kiện liên quan đến tin nhắn
     messageHandler(io, socket)
 
+    // Xử lý các sự kiện liên quan đến gửi file
+    fileHandler(io, socket)
+
     socket.on('disconnect', async () => {
       console.log(`User disconnected: ${username}`)
       await User.findById(userId).updateOne({ status: 'offline', lastSeen: new Date() })
+
+      // xóa file đang upload dở
+      cleanupFileUploads(socket.id)
     })
   })
 }

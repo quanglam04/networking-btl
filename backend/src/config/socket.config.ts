@@ -11,7 +11,8 @@ export const createSocketServer = (server: http.Server) => {
       origin: process.env.ALLOW_ORIGIN,
       methods: ['GET', 'POST'],
       credentials: true
-    }
+    },
+    maxHttpBufferSize: 1e7 // 10MB (10 * 1024 * 1024)
   })
   return io
 }

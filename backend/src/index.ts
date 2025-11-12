@@ -11,12 +11,24 @@ import { setupSocket } from './sockets'
 import { setupApp } from './config/app.config'
 import { fixIndex } from './scripts/fixIndex'
 import mongoose from 'mongoose'
+import path from 'path'
+import fs from 'fs'
 
 const PORT = process.env.PORT || 5000
 const app = express()
 
 // setup express app
 setupApp(app)
+
+// --- THÊM LOGIC STATIC FILE ---
+// Code này biến thư mục 'public' thành thư mục có thể truy cập qua web
+// Ví dụ: file 'public/uploads/file.png' sẽ truy cập được qua URL '/public/uploads/file.png'
+const publicPath = path.resolve(__dirname, '../public/uploads') // Sửa: Thêm /uploads
+
+if (!fs.existsSync(publicPath)) {
+  fs.mkdirSync(publicPath, { recursive: true })
+}
+app.use('/public/uploads', express.static(publicPath))
 
 // Đăng ký routes
 app.use('/api/user', userRouter)
