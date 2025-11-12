@@ -2,6 +2,7 @@ import { Server } from 'socket.io'
 import User from '~/models/User'
 import { socketAuth } from './middleware/auth.middleware'
 import { messageHandler } from './handlers/message.handler'
+import { uploadVideoHandler } from './handlers/video.handler'
 
 /**
  * Entry point để thiết lập Socket.io server
@@ -28,6 +29,9 @@ export const setupSocket = (io: Server) => {
 
     // Xử lý các sự kiện liên quan đến tin nhắn
     messageHandler(io, socket)
+
+    // Upload video
+    uploadVideoHandler(io, socket)
 
     socket.on('disconnect', async () => {
       console.log(`User disconnected: ${username}`)
