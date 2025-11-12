@@ -42,7 +42,8 @@ export const messageHandler = (io: Server, socket: Socket) => {
   socket.on('send-message', async (data, callback) => {
     try {
       // Lấy thông tin người gửi từ socket
-      const { receiverUsername, content, type = 'text', media = [] } = data
+      const { receiverUsername, content, type = 'text', media = null } = data
+      console.log(data)
       const userId = socket.data.userId
       const username = socket.data.username
 
@@ -71,17 +72,22 @@ export const messageHandler = (io: Server, socket: Socket) => {
         })
       }
 
-      /**
-       * 3. Tạo message mới trong conversation
-       */
-      const message = await Message.create({
+      const messageData: any = {
         conversationId: conversation._id,
         senderId: userId,
         type,
         content,
-        media,
         timestamp: new Date()
-      })
+      }
+
+      if (media && Object.keys(media).length > 0) {
+        messageData.media = media
+      }
+
+      /**
+       * 3. Tạo message mới trong conversation
+       */
+      const message = await Message.create(messageData)
 
       /**
        * 4. Cập nhật message cuối cùng (lastMessageId) trong conversation
@@ -103,6 +109,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
         message,
         conversationId: conversation._id
       })
+      console.log('phát đi sự kiện nhận tin nhắn')
 
       /**
        * 7. Gọi callback trả về kết quả cho client đã gửi
