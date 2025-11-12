@@ -23,11 +23,9 @@ const MessageBubble = ({ message }: MessageBubbleProp) => {
 
   return (
     <div className={`flex items-end gap-2 ${message.isMe ? 'flex-row-reverse' : ''} mb-3`}>
-      {/* Avatar cho người khác */}
       {!message.isMe && <Avatar icon={<UserOutlined />} size='small' style={{ backgroundColor: '#1677ff' }} />}
 
       <div className='flex max-w-[75%] flex-col'>
-        {/* Username */}
         {!message.isMe && <span className='mb-1 text-xs font-medium text-gray-500'>{message.senderId.username}</span>}
 
         <div
@@ -42,14 +40,12 @@ const MessageBubble = ({ message }: MessageBubbleProp) => {
           }}
         >
           {isFile ? (
-            // Giao diện file
             <div
               className={`flex cursor-pointer items-center gap-3 p-3 transition-all duration-200 ${
                 message.isMe ? 'hover:bg-blue-700/80' : 'hover:bg-gray-50'
               }`}
               onClick={() => handleOnClick(message.media!.url)}
             >
-              {/* Icon file */}
               <div
                 className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl ${
                   message.isMe ? 'bg-blue-400' : 'bg-blue-100'

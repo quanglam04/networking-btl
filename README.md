@@ -1,110 +1,212 @@
-# Introduction:
+# BÀI TẬP LỚN: LẬP TRÌNH MẠNG
 
-Dự án là Bài tập lớn kết thúc môn Lập trình Mạng, với mục tiêu thiết kế và xây dựng một hệ thống ứng dụng truyền thông mạng hoàn chỉnh, có khả năng xử lý giao tiếp đa người dùng một cách hiệu quả và tức thời.
+## Xây dựng ứng dụng Chat-Realtime
 
-Ứng dụng được chọn phát triển là một Chat Application Real-time, mô phỏng nền tảng nhắn tin hiện đại, nơi người dùng có thể trao đổi thông tin với độ trễ tối thiểu, làm nổi bật vai trò của các giao thức và kỹ thuật lập trình mạng trong môi trường thực tế.
+> 📘 _Mẫu README này là khung hướng dẫn. Sinh viên chỉ cần điền thông tin của nhóm và nội dung dự án theo từng mục._
 
-## Project Structure
+---
+
+## 🧑‍💻 THÔNG TIN NHÓM
+
+| STT | Họ và Tên         | MSSV       | Email                             | Đóng góp |
+| --- | ----------------- | ---------- | --------------------------------- | -------- |
+| 1   | Trịnh Quang Lâm   | B22DCCN482 | lamtq.b22cn482@stu.ptit.edu.vn    | 37%      |
+| 2   | Vũ Nhân Kiên      | B22DCCN434 | kienvn.b22cn434@stu.ptit.edu.vn   | 33%      |
+| 3   | Cao Thị Thu Hương | B22DCCN422 | huongctt.b22cn422@stu.ptit.edu.vn | 30%      |
+
+**Tên nhóm:** Nhóm 19 – Lập trình mạng
+
+---
+
+## 🧠 MÔ TẢ HỆ THỐNG
+
+> Hệ thống là một ứng dụng chat thời gian thực, cho phép người dùng trao đổi tin nhắn và chia sẻ dữ liệu.
+> Ứng dụng gồm server xử lý yêu cầu và client giao tiếp với server thông qua giao thức WebSocket.
+> Server chịu trách nhiệm quản lý người dùng, xử lý tin nhắn và truyền dữ liệu thời gian thực,
+> trong khi client là một ứng dụng web hỗ trợ đăng ký, đăng nhập, nhắn tin, gửi file và gửi video.
+
+**Cấu trúc logic tổng quát:**
 
 ```
-src/
-├── frontend/                # Client-side application (React, etc.)
-│   ├── app/
-│   │   ├── layout/        # Layout components
-│   │   ├── pages/         # Page components and routing
-│   │   ├── styles/        # Global styles and theme
-│   │   ├── App.tsx        # Root component
-│   │   ├── index.tsx      # Entry point
-│   │   └── router.tsx     # Router configuration
-│   ├── assets/            # Static assets
-│   │   ├── fonts/         # Project fonts configuration
-│   │   └── images/        # Project images configuration
-│   ├── services/          # API services and external integrations (Frontend-specific)
-│   └── shared/            # Shared modules and utilities (Frontend-specific)
-│       ├── components/    # Reusable UI components
-│       ├── constants/     # Application constants (Frontend-specific)
-│       ├── contexts/      # Global context (e.g., themeContext, languageContext, loadingContext)
-│       ├── services/      # Common services (e.g., StorageService, Config Interceptor)
-│       ├── hooks/         # Common hooks (e.g., useDarkMode, useLoading)
-│       ├── types/         # TypeScript type definitions (Frontend-specific)
-│       └── utils/         # Utility functions (Frontend-specific)
-└── backend/               # Server-side application (Node/Express, etc.)
-    ├── controllers/       # Handle API logic, call services
-    ├── middlewares/       # Express middlewares (authentication, error handling, etc.)
-    ├── models/            # Define schema/data models (ORM or plain)
-    ├── routes/            # Define endpoints and map to corresponding controllers
-    ├── services/          # Contain business logic
-    ├── sockets/           # Handle WebSocket connections and logic (e.g., Socket.IO)
-    ├── shared/            # Shared modules and utilities (Backend-specific)
-    │   ├── constants/     # Application constants (Backend-specific)
-    │   └── utils/         # Utility functions (Backend-specific)
-    ├── config/            # Configuration files for the server, DB, environment, etc.
-    ├── guiline.txt        # Internal notes or project guidelines
-    ├── index.ts           # Entry point to start the server application
-    └── type.d.ts          # Define custom types for TypeScript (Backend-specific)
+client  <-->  server  <-->  database
 ```
 
-## Prerequisites
+**Sơ đồ hệ thống:**
 
-- Node.js (Version 18 or higher)
-- npm or yarn
+![System Diagram](./static/diagram.png)
 
-## Installation
+---
 
-1. Clone the repository
+## ⚙️ CÔNG NGHỆ SỬ DỤNG
+
+| Thành phần | Công nghệ                                         | Ghi chú                               |
+| ---------- | ------------------------------------------------- | ------------------------------------- |
+| Server     | NodeJS 20 + ExpressJS + socket.io                 | Xử lý logic, quản lý kết nối realtime |
+| Client     | NodeJS 20 + ReactJS 18 + socket.io-client + Axios | Giao tiếp WebSocket + HTTP            |
+| Database   | MongooDB                                          | Lưu trữ dữ liệu tạm thời              |
+
+---
+
+## 🚀 HƯỚNG DẪN CHẠY DỰ ÁN
+
+### 1. Clone repository
 
 ```bash
-git clone [repository-url]
+git clone https://github.com/jnp2018/mid-project-482422434.git assignment-network-project
+cd assignment-network-project
 ```
 
-2. Run the Frontend Application
-
-The frontend application is typically found in the `frontend` directory
-
-- Navigate to the frontend source code directory:
+### 2. Chạy server
 
 ```bash
-cd frontend
+cd source/server
+npm install # cài đặt các thư viện cần thiết
+npm run dev # chạy ứng dụng với môi trường development
 ```
 
-- Install dependencies:
+### 3. Chạy client
 
 ```bash
-npm install
+cd source/client
+npm install # cài đặt các thư viện cần thiết
+npm run dev # chạy ứng dụng với môi trường development
 ```
 
-- Start the development server:
+### 4. Kiểm thử nhanh
+
+Truy cập tại địa chỉ:
 
 ```bash
-npm run dev
+http://localhost:3000
 ```
 
-3. Run the Backend Application
+---
 
-The backend application is typically found in the `backend` directory
+## 🔗 GIAO TIẾP (GIAO THỨC SỬ DỤNG)
 
-- Navigate to the backend source code directory:
+### HTTP REST API
 
-```bash
-cd backend
+| Endpoint                            | Protocol | Method | Input                                                                         | Output                                               |
+| ----------------------------------- | -------- | ------ | ----------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `/api/user/login`                   | HTTP/1.1 | POST   | `{"username":"user","password":"pass"}`                                       | `{"status":status, "message":message, "data": data}` |
+| `/api/user/register`                | HTTP/1.1 | POST   | `{"username":"user","password":"pass","confirm-password":"confirm-password"}` | `{"status":status, "message":message, "data": data}` |
+| `/api/conversations/users`          | HTTP/1.1 | GET    | —                                                                             | `{"status":status, "message":message, "data": data}` |
+| `/api/conversations/find-or-create` | HTTP/1.1 | POST   | —                                                                             | `{"status":status, "message":message, "data": data}` |
+| `/api/message/:conversationId`      | HTTP/1.1 | GET    | —                                                                             | `{"status":status, "message":message, "data": data}` |
+
+## WebSocket Events
+
+**Connection:** `ws://localhost:8080`
+
+| Event                  | Direction       | Payload                                                                                                                           | Response/Broadcast                                                           |
+| ---------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `connect`              | Client → Server | —                                                                                                                                 | Kết nối WebSocket được thiết lập                                             |
+| `join-conversation`    | Client → Server | `conversationId: string`                                                                                                          | Client join vào room của conversation                                        |
+| `leave-conversation`   | Client → Server | `conversationId: string`                                                                                                          | Client leave room của conversation                                           |
+| `send-message`         | Client → Server | `{"receiverUsername":"user","content":"text","type":"text"}`                                                                      | Callback: `{"success":true,"message":{...}}`<br>Broadcast: `receive-message` |
+| `receive-message`      | Server → Client | `{"message":{"_id":"...","content":"...","senderId":{...}},"conversationId":"..."}`                                               | Client nhận tin nhắn mới                                                     |
+| `file-metadata`        | Client → Server | `{"fileId":"uuid","originalName":"file.pdf","size":1024,"mimeType":"application/pdf","totalChunks":10,"receiverUsername":"user"}` | Callback: `{"success":true}`                                                 |
+| `file-chunk`           | Client → Server | `{"fileId":"uuid","chunkIndex":0,"data":"base64_data"}`                                                                           | Callback: `{"success":true}`                                                 |
+| `file-upload-complete` | Client → Server | `{"fileId":"uuid","receiverUsername":"user"}`                                                                                     | Callback: `{"success":true,"message":{...}}`<br>Broadcast: `receive-message` |
+| `disconnect`           | Client ↔ Server | —                                                                                                                                 | Ngắt kết nối, cleanup resources                                              |
+
+## 📊 KẾT QUẢ THỰC NGHIỆM
+
+![Demo Result](./static/demo-1.png)
+
+![Demo Result](./static/demo-2.png)
+
+---
+
+## 🧩 CẤU TRÚC DỰ ÁN
+
+```
+assignment-network-project/
+├── README.md
+├── INSTRUCTION.md
+├── statics/
+│   ├── diagram.png
+│   ├── demo-1.png
+│   ├── demo-2.png
+│   └── demo-3.png
+└── source/
+    ├── server/
+    │   ├── node_modules
+    │   ├── src/
+    │   │   ├── config
+    │   │   ├── controllers
+    │   │   ├── middlewares
+    │   │   ├── models
+    │   │   ├── routes
+    │   │   ├── services
+    │   │   ├── shared
+    │   │   ├── sockets
+    │   │   ├── index.ts
+    │   │   └── type.d.ts
+    │   ├── uploads
+    │   ├── .editorconfig
+    │   ├── .gitignore
+    │   ├── .prettierignore
+    │   ├── .prettierrc
+    │   ├── eslint.config.mjs
+    │   ├── nodemon.json
+    │   ├── package-lock.json
+    │   ├── package.json
+    │   └── tsconfig.json
+    └── client/
+        ├── node_modules
+        ├── public
+        ├── src/
+        │   ├── app/
+        │   │   ├── layout
+        │   │   ├── pages
+        │   │   ├── styles
+        │   │   ├── index.tsx
+        │   │   └── router.tsx
+        │   ├── services
+        │   ├── shared/
+        │   │   ├── components
+        │   │   ├── constants
+        │   │   ├── context
+        │   │   ├── hook
+        │   │   ├── services
+        │   │   ├── types
+        │   │   └── utils
+        │   └── vite-env.d.ts
+        ├── .editorconfig
+        ├── .gitignore
+        ├── .prettierignore
+        ├── .perttierrc
+        ├── eslint.config.js
+        ├── index.html
+        ├── package-lock.json
+        ├── packge.json
+        ├── tsconfig.app.json
+        ├── tsconfig.json
+        ├── tsconfig.node.json
+        └── vite.config.ts
 ```
 
-- Install dependencies:
+---
 
-```bash
-npm install
-```
+## 🧩 HƯỚNG PHÁT TRIỂN THÊM
 
-- Start the development server:
+> Nêu ý tưởng mở rộng hoặc cải tiến hệ thống.
 
-```bash
-npm run dev
-```
+- Thêm tính năng nhóm chat và gọi video để người dùng có thể trò chuyện theo nhóm hoặc gọi trực tiếp qua trình duyệt.
+- Tích hợp chatbot hỗ trợ tự động, giúp gợi ý phản hồi nhanh hoặc trả lời các câu hỏi cơ bản.
+- Bổ sung thông báo đẩy (push notification) khi có tin nhắn mới hoặc tệp được gửi đến người dùng.
+- Lưu trữ tin nhắn trên cloud và đồng bộ đa thiết bị, giúp người dùng truy cập lịch sử trò chuyện ở mọi nơi.
 
-## Member
+---
 
-- Trịnh Quang Lâm
-- Vũ Nhân Kiên
-- Cao Thị Thu Hương
+## 📝 GHI CHÚ
 
-## Overall
+- Repo tuân thủ đúng cấu trúc đã hướng dẫn trong `INSTRUCTION.md`.
+- Đảm bảo test kỹ trước khi submit.
+
+---
+
+## 📚 TÀI LIỆU THAM KHẢO
+
+> [1] https://socket.io/docs/v4
