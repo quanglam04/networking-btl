@@ -6,15 +6,16 @@ import { readChunkAsBase64 } from '@/shared/utils/readChunkAsBase64'
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useLocation } from 'react-router-dom'
 
+const CHUNK_SIZE = 64 * 1024 // 64KB mỗi chunk
+
 const useChatWindowHook = () => {
-  const { conversationId } = useParams<{ conversationId: string }>()
-  const location = useLocation()
-  const { username: receiverUsername, userId: receiverId, status } = location.state || {}
-  const CHUNK_SIZE = 64 * 1024 // 64KB mỗi chunk
   const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState('')
   const [uploadingFile, setUploadingFile] = useState(false)
   const [loading, setLoading] = useState(true)
+  const { conversationId } = useParams<{ conversationId: string }>()
+  const location = useLocation()
+  const { username: receiverUsername, userId: receiverId, status } = location.state || {}
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const { showError } = useNotificationHook()
 
@@ -47,7 +48,6 @@ const useChatWindowHook = () => {
   useEffect(() => {
     if (!conversationId) return
 
-    // Load messages
     loadMessages()
 
     // Listen for new messages
@@ -94,14 +94,8 @@ const useChatWindowHook = () => {
 
     const file = files[0]
 
-    // Kiểm tra kích thước
     if (file.size > 10 * 1024 * 1024) {
       showError('File không được vượt quá 10MB')
-      return
-    }
-
-    if (!receiverUsername) {
-      showError('Vui lòng chọn người nhận')
       return
     }
 
@@ -111,11 +105,6 @@ const useChatWindowHook = () => {
       // Tạo unique ID cho file upload này
       const fileId = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
       const totalChunks = Math.ceil(file.size / CHUNK_SIZE)
-
-      console.log('📤 Starting file upload:')
-      console.log('   - File ID:', fileId)
-      console.log('   - Size:', file.size)
-      console.log('   - Total chunks:', totalChunks)
 
       // Gửi metadata trước
       await socketService.sendFileMetadata({
@@ -127,8 +116,6 @@ const useChatWindowHook = () => {
         receiverUsername
       })
 
-      console.log('✅ Metadata sent')
-
       // Đọc và gửi từng chunk
       for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
         const start = chunkIndex * CHUNK_SIZE
@@ -138,18 +125,12 @@ const useChatWindowHook = () => {
         // Đọc chunk thành base64
         const base64Chunk = await readChunkAsBase64(chunk)
 
-        // Gửi chunk
         await socketService.sendFileChunk({
           fileId,
           chunkIndex,
           totalChunks,
           data: base64Chunk
         })
-
-        console.log(`📦 Sent chunk ${chunkIndex + 1}/${totalChunks}`)
-
-        // Có thể thêm progress bar ở đây
-        // setUploadProgress((chunkIndex + 1) / totalChunks * 100)
       }
 
       // Gửi signal hoàn tất
@@ -157,8 +138,6 @@ const useChatWindowHook = () => {
         fileId,
         receiverUsername
       })
-
-      console.log('✅ File upload completed')
       e.target.value = ''
     } catch (error) {
       showError('Không thể gửi file')
@@ -182,25 +161,24 @@ const useChatWindowHook = () => {
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      console.log('ok')
       e.preventDefault()
       handleSend()
     }
   }
 
   return {
-    messages,
-    inputValue,
-    loading,
-    receiverUsername,
-    receiverId,
     status,
+    loading,
+    messages,
+    receiverId,
+    inputValue,
+    uploadingFile,
     messagesEndRef,
-    handleInputChange,
+    receiverUsername,
     handleSend,
     handleKeyPress,
+    handleInputChange,
     handleFileSelect,
-    uploadingFile,
     setUploadingFile
   }
 }

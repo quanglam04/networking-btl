@@ -174,7 +174,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
 
       callback({ success: true })
     } catch (error: any) {
-      console.error('❌ Error receiving metadata:', error)
+      console.error(error)
       callback({ success: false, error: error.message })
     }
   })
@@ -200,7 +200,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
 
       callback({ success: true })
     } catch (error: any) {
-      console.error('❌ Error receiving chunk:', error)
+      console.error(error)
       callback({ success: false, error: error.message })
     }
   })
@@ -219,7 +219,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
         })
       }
 
-      console.log('🔄 Merging chunks for file:', fileId)
+      console.log('Gộp chunk lại để thành 1 file hoàn chỉnh', fileId)
 
       // Kiểm tra đủ chunks chưa
       if (upload.receivedChunks !== upload.metadata.totalChunks) {
@@ -229,7 +229,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
         })
       }
 
-      // Merge chunks
+      // gộp chunks
       const uploadDir = path.join(process.cwd(), 'uploads')
       if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir, { recursive: true })
@@ -244,7 +244,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
       for (let i = 0; i < upload.metadata.totalChunks; i++) {
         const chunkData = upload.chunks.get(i)
         if (!chunkData) {
-          throw new Error(`Missing chunk ${i}`)
+          throw new Error(`Thiếu chunk ${i}`)
         }
 
         // Ghi chunk vào file
@@ -259,12 +259,11 @@ export const messageHandler = (io: Server, socket: Socket) => {
         writeStream.on('error', reject)
       })
 
-      console.log('✅ File merged successfully:', filePath)
+      console.log('file sau khi đã merge các chunk', filePath)
 
       // Xóa khỏi map
       fileUploads.delete(fileId)
 
-      // Tạo message như cũ
       const receiver = await User.findOne({ username: receiverUsername })
       if (!receiver) {
         return callback({
@@ -297,19 +296,15 @@ export const messageHandler = (io: Server, socket: Socket) => {
         },
         timestamp: new Date()
       })
-
       await Conversation.findByIdAndUpdate(conversation._id, {
         lastMessageId: message._id
       })
 
       await message.populate('senderId', 'username status')
-
       io.to(conversation._id.toString()).emit('receive-message', {
         message,
         conversationId: conversation._id
       })
-
-      console.log('✅ Message sent to room')
 
       callback({
         success: true,
@@ -317,11 +312,9 @@ export const messageHandler = (io: Server, socket: Socket) => {
         conversationId: conversation._id
       })
     } catch (error: any) {
-      console.error('🚨 Error completing file upload:', error)
-
+      console.error(error)
       // Cleanup nếu có lỗi
       fileUploads.delete(data.fileId)
-
       callback({ success: false, error: error.message })
     }
   })
@@ -331,7 +324,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
     // Xóa các file upload chưa hoàn thành của user này
     for (const [fileId, upload] of fileUploads.entries()) {
       if (upload.metadata.senderId === socket.data.userId) {
-        console.log('🗑️ Cleaning up incomplete upload:', fileId)
+        console.log(fileId)
         fileUploads.delete(fileId)
       }
     }
