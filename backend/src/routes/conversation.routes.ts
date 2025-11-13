@@ -5,6 +5,9 @@ import { authenticateToken } from '~/middlewares/user.middleware'
 /**
  * Định nghĩa các route liên quan đến conversation
  */
+/**
+ * Định nghĩa các route liên quan đến conversation
+ */
 
 export const conversationRouter = express.Router()
 

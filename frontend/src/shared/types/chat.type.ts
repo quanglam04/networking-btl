@@ -1,5 +1,7 @@
 import type { Status } from './auth.type'
 
+import type { Status } from './auth.type'
+
 export interface Message {
   id: string
   conversationId: string
