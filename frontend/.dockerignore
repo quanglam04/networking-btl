@@ -1,0 +1,31 @@
+# Thư mục nặng, không cần trong quá trình build
+node_modules
+build
+dist
+.cache
+
+# Git files
+.git
+.gitignore
+
+# Docker files
+Dockerfile
+docker-compose*.yml
+
+# Logs
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pnpm-debug.log
+*.log
+
+# OS / Editor files
+.DS_Store
+*.swp
+*.swo
+*.idea
+*.vscode
+
+# Tests (không cần khi build image)
+coverage
+__tests__
