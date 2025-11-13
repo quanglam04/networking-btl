@@ -1,5 +1,5 @@
 import express from 'express'
-import { getListUser, login, logout, register, test } from '~/controllers/user.controller'
+import { getListUser, login, logout, register } from '~/controllers/user.controller'
 import { authenticateToken } from '~/middlewares/user.middleware'
 /**
  * Định nghĩa các route liên quan đến user
@@ -11,7 +11,6 @@ userRouter.post('/login', login)
 userRouter.post('/register', register)
 userRouter.post('/logout', logout)
 
-userRouter.use(authenticateToken) // áp dụng middleware xác thực token cho các route bên dưới
+userRouter.use(authenticateToken)
 
-userRouter.get('/test', test)
 userRouter.get('/list', getListUser)

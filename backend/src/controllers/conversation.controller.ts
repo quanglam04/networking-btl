@@ -1,42 +1,11 @@
 import { Response } from 'express'
+import { Response } from 'express'
 import Conversation from '~/models/Conversation'
 import { AuthRequest } from '~/shared/types/util.type'
 import * as jwt from 'jsonwebtoken'
 import User from '~/models/User'
 import mongoose from 'mongoose'
 import logger from '~/shared/utils/log'
-
-/**
- * Lấy tất cả các cuộc hội thoại mà người dùng có ID tham gia (hàm này để test postman chứ không dùng ở FE)
- * @param req: AuthRequest
- * @param res: Response
- * @returns Danh sách các cuộc hội thoại
- */
-const getAllConversationMessages = async (req: AuthRequest, res: Response) => {
-  try {
-    const userId = (req.user as jwt.JwtPayload).id
-    const username = (req.user as jwt.JwtPayload).username
-    logger.info(`Lấy tất cả cuộc hội hoại của người dùng ${username}`)
-
-    const conversations = await Conversation.find({
-      participants: userId
-    })
-      .populate('participants', 'username status lastSeen')
-      .populate({
-        path: 'lastMessageId',
-        populate: {
-          path: 'senderId',
-          select: 'username'
-        }
-      })
-      .sort({ updatedAt: -1 })
-
-    res.json({ success: true, conversations })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message })
-  }
-}
 
 /**
  * @param req: AuthRequest
@@ -65,7 +34,7 @@ const findOrCreateConversation = async (req: AuthRequest, res: Response) => {
 
     // Dùng findOneAndUpdate với upsert
     const conversation = await Conversation.findOneAndUpdate(
-      { participants: participantIds }, // Match exact array
+      { participants: participantIds },
       {
         $setOnInsert: {
           participants: participantIds,
@@ -77,7 +46,7 @@ const findOrCreateConversation = async (req: AuthRequest, res: Response) => {
       },
       {
         upsert: true, // Tạo mới nếu không tồn tại
-        new: true, // Trả về document mới
+        new: true,
         setDefaultsOnInsert: true
       }
     ).populate('participants', 'username status lastSeen')
@@ -88,7 +57,7 @@ const findOrCreateConversation = async (req: AuthRequest, res: Response) => {
       data: conversation
     })
   } catch (error: any) {
-    console.error('❌ Error:', error)
+    console.error(error)
     return res.status(500).json({
       success: false,
       message: error.message,
@@ -107,7 +76,6 @@ const getAllUserExceptCurrent = async (req: AuthRequest, res: Response) => {
   logger.info('Lấy tất cả người dùng trừ người dùng hiện tại')
   try {
     const currentUserId = (req.user as jwt.JwtPayload).id
-
     const users = await User.find({
       _id: { $ne: currentUserId }
     }).select('username status lastSeen')
@@ -119,4 +87,4 @@ const getAllUserExceptCurrent = async (req: AuthRequest, res: Response) => {
   }
 }
 
-export { getAllConversationMessages, findOrCreateConversation, getAllUserExceptCurrent }
+export { findOrCreateConversation, getAllUserExceptCurrent }

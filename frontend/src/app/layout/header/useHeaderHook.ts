@@ -15,10 +15,6 @@ const useHeaderHook = () => {
     navigate('/login')
     showSuccess('Đăng xuất thành công')
   }
-  const test = async () => {
-    const response = await clientService.test()
-    console.log(response)
-  }
-  return { isLoggedIn, goToRegister, goToLogin, handleLogout, navigate, test }
+  return { isLoggedIn, goToRegister, goToLogin, handleLogout, navigate }
 }
 export default useHeaderHook

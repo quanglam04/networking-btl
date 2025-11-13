@@ -6,10 +6,6 @@ import * as jwt from 'jsonwebtoken'
 import { addToBlacklist } from '~/services/jwt.service'
 import { AuthRequest } from '~/shared/types/util.type'
 
-const test = (req: Request, res: Response) => {
-  res.json({ message: 'OK' })
-}
-
 const register = async (req: Request, res: Response) => {
   logger.info('Đăng ký người dùng mới')
   try {
@@ -131,7 +127,6 @@ const logout = async (req: Request, res: Response) => {
   // Logout cho người dùng
   logger.info('Đăng xuất cho người dùng')
   try {
-    // Laays token trong header
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
 
@@ -205,4 +200,4 @@ const getListUser = async (req: AuthRequest, res: Response) => {
   }
 }
 
-export { test, register, login, logout, getListUser }
+export { register, login, logout, getListUser }

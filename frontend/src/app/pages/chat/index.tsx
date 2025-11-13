@@ -1,9 +1,6 @@
 import BaseLayout from '@/app/layout/base-layout'
-import ChatInput from '@/app/pages/chat/components/chat-input'
-import ChatWindow from '@/app/pages/chat/components/chat-window'
 import ListUser from './components/list-user'
 import { Outlet, useLocation } from 'react-router-dom'
-
 const ChatPage = () => {
   const location = useLocation()
   const hasSelectedChat = location.pathname !== '/chat'

@@ -1,12 +1,6 @@
 import http from '@/shared/services/http.service'
 import type { ApiResponse } from '@/shared/types/http.type'
-import type {
-  GetListUserResponse,
-  LoginRequest,
-  LoginResponse,
-  RegisterRequest,
-  RequestResponse
-} from '@/shared/types/auth.type'
+import type { LoginRequest, LoginResponse, RegisterRequest, RequestResponse } from '@/shared/types/auth.type'
 import storageService from '@/shared/services/storage.service'
 import type { Message } from '@/shared/types/chat.type'
 
@@ -23,11 +17,6 @@ class _ClientService {
 
   async getAllMessageOfConversation(conversationId: string) {
     const response = await http.get<ApiResponse<Message[]>>(`api/message/${conversationId}`)
-    return response
-  }
-
-  async test() {
-    const response = await http.get<ApiResponse<null>>('api/user/test')
     return response
   }
 

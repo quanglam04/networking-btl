@@ -6,7 +6,7 @@ import { Status } from '@/shared/types/auth.type'
 const { Text } = Typography
 
 const ListUser = () => {
-  const { listUser, selectedUserId, handleSelectUser, onlineUsers } = useListUserHook()
+  const { listUser, selectedUserId, handleSelectUser } = useListUserHook()
 
   return (
     <List
@@ -27,10 +27,11 @@ const ListUser = () => {
               </Badge>
             }
             title={
-              <div className='flex items-center justify-between'>
+              <div className='flex w-full items-center justify-between'>
                 <Text strong className='truncate'>
                   {user.username}
                 </Text>
+
                 <span
                   className={`h-2 w-2 rounded-full ${user.status === Status.ONLINE ? 'bg-green-500' : 'bg-gray-400'}`}
                   title={user.status === Status.ONLINE ? 'Online' : 'Offline'}
