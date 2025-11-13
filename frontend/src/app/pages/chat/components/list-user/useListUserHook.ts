@@ -37,7 +37,6 @@ const useListUserHook = () => {
       }
     } catch (error) {
       showError('Không thể tải danh sách người dùng')
-      console.error('Error loading users:', error)
     }
   }
 
@@ -49,10 +48,8 @@ const useListUserHook = () => {
       return
     }
 
-    // Connect socket
     socketService.connect(token)
 
-    // Listen online users
     socketService.onUsersOnline(({ userIds }) => {
       setOnlineUsers(userIds)
     })
@@ -65,7 +62,6 @@ const useListUserHook = () => {
       setOnlineUsers((prev) => prev.filter((id) => id !== userId))
     })
 
-    // Load users
     getListUser()
 
     return () => {
@@ -73,7 +69,7 @@ const useListUserHook = () => {
     }
   }, [])
 
-  // Update user status based on socket events
+  // Cập nhật trạng thái user dựa trên sự kiện socket
   useEffect(() => {
     setListUser((prevUsers) =>
       prevUsers.map((user) => ({
@@ -83,7 +79,7 @@ const useListUserHook = () => {
     )
   }, [onlineUsers])
 
-  // Handle select user
+  // Xử lý sự kiện chọn User
   const handleSelectUser = async (user: GetListUserResponse) => {
     try {
       console.log(`username: ${user.username}`)
@@ -96,10 +92,10 @@ const useListUserHook = () => {
         const conversationId = response.data.data._id
         console.log('conversationId::::', conversationId)
 
-        // Join conversation room
+        // Tham gia cuộc trò chuyện
         socketService.joinConversations([conversationId])
 
-        // Navigate to chat với conversationId và username
+        // điều hướng đến chat với conversationId và username
         navigate(`/chat/${conversationId}`, {
           state: {
             username: user.username,
@@ -111,7 +107,6 @@ const useListUserHook = () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       showError(error.response?.data?.error || 'Không thể tạo cuộc trò chuyện')
-      console.error('Error creating conversation:', error)
     }
   }
 

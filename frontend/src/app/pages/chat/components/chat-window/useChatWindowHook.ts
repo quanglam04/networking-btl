@@ -46,11 +46,7 @@ const useChatWindowHook = () => {
   // Setup socket listeners
   useEffect(() => {
     if (!conversationId) return
-
-    // Load messages
     loadMessages()
-
-    // Listen for new messages
     socketService.onReceiveMessage(({ message, conversationId: msgConvId }) => {
       console.log('lắng nghe sự kiện nhận tin nhăn')
       if (msgConvId === conversationId) {
@@ -91,7 +87,6 @@ const useChatWindowHook = () => {
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
-
     const file = files[0]
 
     // Kiểm tra kích thước
@@ -112,10 +107,10 @@ const useChatWindowHook = () => {
       const fileId = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
       const totalChunks = Math.ceil(file.size / CHUNK_SIZE)
 
-      console.log('📤 Starting file upload:')
-      console.log('   - File ID:', fileId)
-      console.log('   - Size:', file.size)
-      console.log('   - Total chunks:', totalChunks)
+      console.log('Bắt đầu upload file:')
+      console.log('- File ID:', fileId)
+      console.log('- Size:', file.size)
+      console.log('- Total chunks:', totalChunks)
 
       // Gửi metadata trước
       await socketService.sendFileMetadata({
@@ -126,8 +121,6 @@ const useChatWindowHook = () => {
         totalChunks,
         receiverUsername
       })
-
-      console.log('✅ Metadata sent')
 
       // Đọc và gửi từng chunk
       for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
@@ -146,23 +139,18 @@ const useChatWindowHook = () => {
           data: base64Chunk
         })
 
-        console.log(`📦 Sent chunk ${chunkIndex + 1}/${totalChunks}`)
-
-        // Có thể thêm progress bar ở đây
-        // setUploadProgress((chunkIndex + 1) / totalChunks * 100)
+        console.log(`Gửi chunk ${chunkIndex + 1}/${totalChunks}`)
       }
 
-      // Gửi signal hoàn tất
       await socketService.completeFileUpload({
         fileId,
         receiverUsername
       })
 
-      console.log('✅ File upload completed')
       e.target.value = ''
     } catch (error) {
       showError('Không thể gửi file')
-      console.error('Error sending file:', error)
+      console.error(error)
     } finally {
       setUploadingFile(false)
     }
@@ -176,7 +164,6 @@ const useChatWindowHook = () => {
       setInputValue('')
     } catch (error) {
       showError('Không thể gửi tin nhắn')
-      console.error('Error sending message:', error)
     }
   }
 
@@ -196,11 +183,11 @@ const useChatWindowHook = () => {
     receiverId,
     status,
     messagesEndRef,
+    uploadingFile,
     handleInputChange,
     handleSend,
     handleKeyPress,
     handleFileSelect,
-    uploadingFile,
     setUploadingFile
   }
 }

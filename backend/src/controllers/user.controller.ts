@@ -6,10 +6,6 @@ import * as jwt from 'jsonwebtoken'
 import { addToBlacklist } from '~/services/jwt.service'
 import { AuthRequest } from '~/shared/types/util.type'
 
-const test = (req: Request, res: Response) => {
-  res.json({ message: 'OK' })
-}
-
 const register = async (req: Request, res: Response) => {
   logger.info('Đăng ký người dùng mới')
   try {
@@ -131,7 +127,6 @@ const logout = async (req: Request, res: Response) => {
   // Logout cho người dùng
   logger.info('Đăng xuất cho người dùng')
   try {
-    // Laays token trong header
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
 
@@ -205,26 +200,4 @@ const getListUser = async (req: AuthRequest, res: Response) => {
   }
 }
 
-const handleUploadFile = async (req: AuthRequest, res: Response) => {
-  if (!req.file) {
-    console.log('không lấy được file trong request')
-    return res.status(400).json({ error: 'Không có file được upload' })
-  }
-
-  console.log('upload 3')
-
-  // Trả về thông tin file
-  return res.status(HTTPStatus.OK).json({
-    message: 'Gửi file thành công',
-    status: HTTPStatus.OK,
-    data: {
-      filename: req.file.filename,
-      originalName: req.file.originalname,
-      size: req.file.size,
-      mimetype: req.file.mimetype,
-      url: `/uploads/${req.file.filename}` // URL để truy cập file
-    }
-  })
-}
-
-export { test, register, login, logout, getListUser, handleUploadFile }
+export { register, login, logout, getListUser }

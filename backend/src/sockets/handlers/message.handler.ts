@@ -123,7 +123,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
         conversationId: conversation._id
       })
     } catch (error: any) {
-      console.error('🚨 Lỗi khi gửi tin nhắn:', error)
+      console.error(error)
       callback({ success: false, error: error.message })
     }
   })
@@ -140,14 +140,13 @@ export const messageHandler = (io: Server, socket: Socket) => {
   // 1. Nhận metadata
   socket.on('file-metadata', async (metadata, callback) => {
     try {
-      console.log('Lắng nghe event tại server')
       const { fileId, originalName, size, mimeType, totalChunks, receiverUsername } = metadata
 
-      console.log('📁 Received file metadata:')
-      console.log('   - File ID:', fileId)
-      console.log('   - Name:', originalName)
-      console.log('   - Size:', size)
-      console.log('   - Total chunks:', totalChunks)
+      console.log('Nhận metadata:')
+      console.log('- File ID:', fileId)
+      console.log('- Name:', originalName)
+      console.log('- Size:', size)
+      console.log('- Total chunks:', totalChunks)
 
       // Kiểm tra người nhận
       const receiver = await User.findOne({ username: receiverUsername })
@@ -174,7 +173,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
 
       callback({ success: true })
     } catch (error: any) {
-      console.error('❌ Error receiving metadata:', error)
+      console.error(error)
       callback({ success: false, error: error.message })
     }
   })
@@ -200,7 +199,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
 
       callback({ success: true })
     } catch (error: any) {
-      console.error('❌ Error receiving chunk:', error)
+      console.error(error)
       callback({ success: false, error: error.message })
     }
   })
@@ -219,7 +218,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
         })
       }
 
-      console.log('🔄 Merging chunks for file:', fileId)
+      console.log('Gộp các chunk cho file:', fileId)
 
       // Kiểm tra đủ chunks chưa
       if (upload.receivedChunks !== upload.metadata.totalChunks) {
@@ -259,7 +258,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
         writeStream.on('error', reject)
       })
 
-      console.log('✅ File merged successfully:', filePath)
+      console.log('File sau khi gộp thành công:', filePath)
 
       // Xóa khỏi map
       fileUploads.delete(fileId)
@@ -309,15 +308,13 @@ export const messageHandler = (io: Server, socket: Socket) => {
         conversationId: conversation._id
       })
 
-      console.log('✅ Message sent to room')
-
       callback({
         success: true,
         message,
         conversationId: conversation._id
       })
     } catch (error: any) {
-      console.error('🚨 Error completing file upload:', error)
+      console.error(error)
 
       // Cleanup nếu có lỗi
       fileUploads.delete(data.fileId)
@@ -331,7 +328,6 @@ export const messageHandler = (io: Server, socket: Socket) => {
     // Xóa các file upload chưa hoàn thành của user này
     for (const [fileId, upload] of fileUploads.entries()) {
       if (upload.metadata.senderId === socket.data.userId) {
-        console.log('🗑️ Cleaning up incomplete upload:', fileId)
         fileUploads.delete(fileId)
       }
     }

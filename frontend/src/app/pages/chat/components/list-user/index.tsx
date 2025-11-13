@@ -6,7 +6,7 @@ import { Status } from '@/shared/types/auth.type'
 const { Text } = Typography
 
 const ListUser = () => {
-  const { listUser, selectedUserId, handleSelectUser, onlineUsers } = useListUserHook()
+  const { listUser, selectedUserId, handleSelectUser } = useListUserHook()
 
   return (
     <List
