@@ -17,12 +17,6 @@ const app = express()
 setupApp(app)
 
 // Đăng ký routes
-const app = express()
-
-// setup express app
-setupApp(app)
-
-// Đăng ký routes
 app.use('/api/user', userRouter)
 app.use('/api/message', messageRouter)
 app.use('/api/message', messageRouter)

@@ -34,20 +34,3 @@ export const clearConversationAndMessage = async () => {
     console.error(error)
   }
 }
-
-export const clearConversationAndMessage = async () => {
-  try {
-    await Message.deleteMany({})
-    const result = await Conversation.deleteMany({})
-
-    console.log('============================================')
-    console.log('✅ Xóa dữ liệu thành công')
-    console.log(`Số lượng cuộc trò chuyện đã xóa: ${result.deletedCount}`)
-    console.log('============================================')
-
-    return result.deletedCount
-  } catch (error) {
-    console.error('❌ Lỗi khi xóa dữ liệu users:', error)
-    throw error
-  }
-}

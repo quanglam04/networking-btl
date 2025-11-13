@@ -1,12 +1,6 @@
 import BaseLayout from '@/app/layout/base-layout'
 import ListUser from './components/list-user'
 import { Outlet, useLocation } from 'react-router-dom'
-
-const ChatPage = () => {
-  const location = useLocation()
-  const hasSelectedChat = location.pathname !== '/chat'
-import { Outlet, useLocation } from 'react-router-dom'
-
 const ChatPage = () => {
   const location = useLocation()
   const hasSelectedChat = location.pathname !== '/chat'
@@ -18,15 +12,6 @@ const ChatPage = () => {
           <ListUser />
         </div>
         <div className='flex flex-grow flex-col'>
-          {hasSelectedChat ? (
-            <>
-              <div className='flex-grow overflow-y-auto bg-white p-4'>
-                <Outlet />
-              </div>
-            </>
-          ) : (
-            <div className='flex h-full items-center justify-center text-gray-400'>Chọn người dùng để bắt đầu chat</div>
-          )}
           {hasSelectedChat ? (
             <>
               <div className='flex-grow overflow-y-auto bg-white p-4'>

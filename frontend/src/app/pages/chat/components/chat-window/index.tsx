@@ -83,7 +83,6 @@ const ChatWindow = () => {
           </Button>
         </div>
       </div>
-      </div>
     </div>
   )
 }
